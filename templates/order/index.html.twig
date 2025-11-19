@@ -1,0 +1,87 @@
+{# templates/order/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Оценка имущества{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="mb-0">Заказать оценку</h3>
+                    </div>
+                    <div class="card-body">
+                        {# Вывод сообщений об успехе (Flash messages) #}
+                        {% for message in app.flashes('success') %}
+                            <div class="alert alert-success">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+
+                        {# Начало формы #}
+                        {{ form_start(orderForm) }}
+
+                        <div class="mb-3">
+                            {# Вывод лейбла и виджета для Услуги #}
+                            {{ form_label(orderForm.serviceType, null, {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(orderForm.serviceType, {'attr': {'class': 'form-select js-service-select'}}) }}
+                            <div class="form-text text-muted">
+                                Выберите тип услуги из списка
+                            </div>
+                        </div>
+
+                        {# Блок отображения цены (меняется через JS) #}
+                        <div class="mb-3 p-3 bg-light rounded border">
+                            <h5>Стоимость услуги: <span id="price-display" class="fw-bold text-primary">500</span> ₽</h5>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(orderForm.email, null, {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(orderForm.email, {'attr': {'class': 'form-control', 'placeholder': 'example@mail.ru'}}) }}
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            {{ form_widget(orderForm.submit, {'attr': {'class': 'btn btn-success btn-lg'}}) }}
+                        </div>
+
+                        {# Конец формы #}
+                        {{ form_end(orderForm) }}
+                    </div>
+                </div>
+
+                <div class="text-center mt-3">
+                    <a href="{{ path('app_logout') }}" class="text-secondary">Выйти из системы</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Скрипт для динамической смены цены #}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const select = document.querySelector('.js-service-select');
+            const priceDisplay = document.getElementById('price-display');
+
+            // Цены дублируем с бэкенда для визуализации
+            const prices = {
+                'auto': 500,
+                'flat': 1000,
+                'business': 5000
+            };
+
+            function updatePrice() {
+                const value = select.value;
+                if (prices[value]) {
+                    priceDisplay.textContent = prices[value];
+                }
+            }
+
+            // Слушаем изменения
+            select.addEventListener('change', updatePrice);
+
+            // Запускаем один раз при загрузке (чтобы показать цену выбранного по умолчанию)
+            updatePrice();
+        });
+    </script>
+{% endblock %}
