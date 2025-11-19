@@ -45,7 +45,12 @@
 Перейдите по адресу: `http://127.0.0.1:8000/login`
 
 ## Тестирование
-Для запуска автотестов используется отдельная база SQLite (var/test.db).
+Для запуска тестов необходимо подготовить тестовую базу данных (выполнить один раз):
+   ```bash
+  php bin/console --env=test doctrine:database:create
+  php bin/console --env=test doctrine:schema:create
+   ```
+После этого запуск тестов:
    ```bash
   php bin/phpunit
    ```
